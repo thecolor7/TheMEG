@@ -129,6 +129,7 @@ car_t *lremove(char *platep) {
 	}
 
 	current = front->next;
+	p = front;
 	//while loop to find plate match
 	while ((current != NULL) && (strcmp(platep, current->plate) != 0)) { //switched to checking the currents plate
 			p = current;
