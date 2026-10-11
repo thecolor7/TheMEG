@@ -116,11 +116,18 @@ int32_t hput(hashtable_t *htp, void *ep, const char *key, int keylen) {
 	hashtable_in_t *hp = htp;
 	int idx = 0;
 
-	//exit failure if no hp
-	if (hp == NULL) {
+	//exit failure if no hp || MATT ADDITION; EXPANDED IF STATEMENT: Added this as an extra safequard to ensure all inputs to the function are properly initialized
+
+	// ORGININAL CODE:
+	//if (hp == NULL) {
+	//	return(1);
+	//}
+
+	// New Addition:
+	if (hp == NULL || ep == NULL || key == NULL){
 		return(1);
 	}
-
+	
 	//gets the hash index from key
 	idx = SuperFastHash(key, keylen, hp->size);
 	//opens new queue if none yet exists
@@ -156,13 +163,19 @@ void *hsearch(hashtable_t *htp, bool (*searchfn)(void* elementp, const void* sea
 	void *match = NULL;
 	int idx = 0;
 	
-	//can't do anything if no hp
-  if (hp == NULL || searchfn == NULL) {
+	//can't do anything if no hp || MATT ADDITION: Expanded if statement as in hput to check for all valid inputs
+  if (hp == NULL || searchfn == NULL || key == NULL) {
     return(NULL);
   }
 
 	//Finds the right queue
 	idx = SuperFastHash(key, keylen, hp->size);
+
+	//MATT ADDITION: Added a final check to quard against segmentation fault from trying to access a null entry
+	if (hp->table[idx] == NULL) {
+		return(NULL);
+	}
+
 	//Searches within queue
 	match = qsearch(hp->table[idx], searchfn, key);
 	//qsearch handles making this NULL if not found
@@ -176,15 +189,22 @@ void *hremove(hashtable_t *htp, bool (*searchfn)(void* elementp, const void* sea
   void *match = NULL;
   int idx = 0;
 
-  //can't do anything if no hp
-  if (hp == NULL || searchfn == NULL) {
+  //can't do anything if no hp  || MATT ADDITION: Expanded if statement as in hput to check for all valid inputs
+  if (hp == NULL || searchfn == NULL || key == NULL) {
     return(NULL);
   }
 
   //Finds the right queue
   idx = SuperFastHash(key, keylen, hp->size);
+
+	//MATT ADDITION: Added a final check to quard against segmentation fault from trying to access a null entry
+	if (hp->table[idx] == NULL) {
+		return(NULL);
+	}
+	
   //Searches within queue
   match = qremove(hp->table[idx], searchfn, key);
   //qremove handles making this NULL if not found
   return(match);
 }
+
