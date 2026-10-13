@@ -10,11 +10,11 @@
  */
 
 #include <stdio.h>
+//make sure to link .a file in make for .h files
 
 int main (void) {
 
-	// Simply printing hello!
-	printf("\n\nHello!\n\n");
+	webpage_t *new = webpage_new("https://thayer.github.io/engs50/", 0, NULL);
 	
 	return(0);
 	
