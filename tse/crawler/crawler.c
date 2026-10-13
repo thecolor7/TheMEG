@@ -10,11 +10,32 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <webpage.h>
 //make sure to link .a file in make for .h files
 
 int main (void) {
 
 	webpage_t *new = webpage_new("https://thayer.github.io/engs50/", 0, NULL);
+	if (!webpage_fetch(new)) {
+		printf("failed to fetch");
+		exit(EXIT_FAILURE);
+	}
+
+	int i = 0;
+	char *url;
+
+	while ((i = webpage_getNextURL(new, i, &url)) > 0) {
+		if (IsInternalURL(url)) {
+			printf("Internal url : %s\n", url);
+		} else {
+			printf("External url : %s\n", url);
+		}
+		free(url);
+	}
+
+	webpage_delete(new);
+	exit(EXIT_SUCCESS);
 	
 	return(0);
 	
